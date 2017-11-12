@@ -1,60 +1,94 @@
 rm(list=ls())
-pollutantmean <- function(specdata,corrval)
+
+pollutantmean <- function(specdata,x)
 {
   filenames <- list.files(specdata, pattern="*.csv", full.names=TRUE)
-  print(filenames[1:2])
-  resvvalue1 <- filenames[1:2]
-  print(resvvalue1)
   
-  ldf <- lapply(resvvalue1, read.csv)
   
-  temprbind = NULL
+  
   #temprbind  =0
-  corrr = numeric()
-  for(i in 1:2)
+  #List1=list()
+  List1 = numeric()
+  List2=numeric()
+  
+  #List2=list()
+  for(i in x)
   {
     
-    temprbind <- rbind(data.frame(temprbind),data.frame(ldf[i]))
+    #print(x)
+    resvvalue1 <- filenames[i]
+    #print(resvvalue1)
+    
+    ldf <- lapply(resvvalue1, read.csv)
+   
+    
+    ldf <- (na.omit(data.frame(ldf)))
+    
+    Countnull <-(nrow(ldf))
+    #print(Countnull)
+    #List1[[length(List1)+1]] =  i
+    #List2[[length(List2)+1]] = Countnull
+    List2 = c(List2,Countnull)
+    List1 = c(List1,i)
+    #print(List1)
+    
     
     
   }
   
- OmmitingNas <- na.omit(temprbind)
- #print(temprbind)
- print(OmmitingNas)
- GettingSubset <- OmmitingNas[1:corrval,]
-
- print((GettingSubset))
- sulphate <- GettingSubset$sulfate
- nitrate <- GettingSubset$nitrate
+  
+  #print(List1)
+  #print(List2)
+  
+  #df <- data.frame(matrix(unlist(List1), nrow = length(x), byrow  = FALSE))
+  df <- data.frame(List1,List2)
+  
  
- for(i in 1:nrow(GettingSubset))
- {
- #data.frame(ResToSupply) <- GettingSubset[,i]
- #print(class(ResToSupply[i]))
- #print(ResToSupply)
- print("--sulphate--")
- print(sulphate[i])
- print("--nitrate--")
- print((nitrate[i]))
- corrr = c(corrr, cor(sulphate[i], nitrate[i]))
- print("the correlation of the result")
- #cor(sulphate[i], nitrate[i])
- print(cor(sulphate[i], nitrate[i]))
- #CorResult <- cor(sulphate[i],nitrate[i])
-
- #print(corrr)
- }
- print(corrr)
+  
+  
+  #print(df)
+  
+  print("RRrrRRRRRRRRRRRRRRRRRRRRRRR$$$$$$$$$$$$$$FFFFFFFFFFF")
+  
+  #print(ComboRet$2)
+  print("end ***********************************")
+  return(df)
   
 }
-cor(c(6,4),c(7,5))
-x <- mtcars[1:3]
-y <- mtcars[4:6]
-cor(x, y)
 
+CaliculatingThreshold <- function(Dir,threshold)
+{
+  Currentdf <- pollutantmean(Dir,1:322)
+  #dataframe <- Currentdf()
+  print("XXXXXXXX")
+  print(length(Currentdf$List1))
+  print("_____")
+  corelation =numeric()
+  
+  for(i in 1:length(Currentdf$List2))
+  {
+    if(Currentdf$List2[i] > threshold)
+    { 
+      
+      FileId <- Currentdf$List1[i]
+      FileValue <- Currentdf$List2[i]
+      filenames <- list.files(Dir, pattern="*.csv", full.names=TRUE)
+      resvvalue1 <- filenames[FileId]
+      ldf <- lapply(resvvalue1, read.csv)
+      ldf <- (na.omit(data.frame(ldf)))
+      #print(ldf)
+      corelation<- c(corelation,cor(ldf$sulfate,ldf$nitrate))
+      
+      
+    }
+    
+    
+  }
+  print(corelation)
+  #print(corelation)
+  
+  }
 
-#pollutantmean("/Users/manishreddybendhi/Desktop/Fun/RProgrammingCoursera/specdata",1:300)
-pollutantmean("C://Users//Mreddy//Desktop//MeshineLearning//DataScience//CourseraAssigenment-1//rprog%2Fdata%2Fspecdata//specdata",100)
-
+CaliculatingThreshold("/Users/manishreddybendhi/Desktop/Fun/RProgrammingCoursera/specdata",400)
+head(CaliculatingThreshold("/Users/manishreddybendhi/Desktop/Fun/RProgrammingCoursera/specdata",400))
 
